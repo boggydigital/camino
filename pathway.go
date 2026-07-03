@@ -1,4 +1,4 @@
-package pathways
+package camino
 
 type (
 	AbsDir string

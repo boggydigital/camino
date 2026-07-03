@@ -1,9 +1,10 @@
-package pathways
+package camino
 
 import (
-	"github.com/boggydigital/testo"
 	"strconv"
 	"testing"
+
+	"github.com/boggydigital/testo"
 )
 
 type sanInOut struct {

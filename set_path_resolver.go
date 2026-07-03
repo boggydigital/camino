@@ -1,4 +1,4 @@
-package pathways
+package camino
 
 import (
 	"bufio"

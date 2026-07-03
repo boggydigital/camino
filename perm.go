@@ -1,5 +1,8 @@
-package pathways
+package camino
 
 import "os"
 
-const PermUrwGrwOr os.FileMode = 0775
+const (
+	permUrwGrwOr    os.FileMode = 0775
+	DefaultFileMode             = permUrwGrwOr
+)
