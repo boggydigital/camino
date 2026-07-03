@@ -88,7 +88,7 @@ func GetRel(relativePath RelPath, absolutePath AbsPath) string {
 	panic("abs paths not registered for rel path")
 }
 
-func ReadDirectories(path string) (map[string]string, error) {
+func ReadOverrides(path string) (map[string]string, error) {
 
 	directoriesFile, err := os.Open(path)
 	if err != nil {
