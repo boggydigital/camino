@@ -10,21 +10,21 @@ import (
 )
 
 type (
-	AbsPath int
-	RelPath int
+	AbsDir int
+	RelDir int
 )
 
 var (
-	absPaths    map[AbsPath]string
-	relPaths    map[RelPath]string
-	relAbsPaths map[RelPath][]AbsPath
+	absPaths      map[AbsDir]string
+	relPaths      map[RelDir]string
+	relAbsParents map[RelDir][]AbsDir
 )
 
-func Register(absolutePaths map[AbsPath]string, relativePaths map[RelPath]string, relativeAbsolutePaths map[RelPath][]AbsPath) error {
+func Register(absolutePaths map[AbsDir]string, relativePaths map[RelDir]string, relativeAbsoluteParents map[RelDir][]AbsDir) error {
 
 	absPaths = absolutePaths
 	relPaths = relativePaths
-	relAbsPaths = relativeAbsolutePaths
+	relAbsParents = relativeAbsoluteParents
 
 	for _, ap := range absolutePaths {
 		if _, err := os.Stat(ap); os.IsNotExist(err) {
@@ -36,7 +36,7 @@ func Register(absolutePaths map[AbsPath]string, relativePaths map[RelPath]string
 
 	for rp, relPath := range relativePaths {
 
-		if aps, ok := relativeAbsolutePaths[rp]; ok && len(aps) > 0 {
+		if aps, ok := relativeAbsoluteParents[rp]; ok && len(aps) > 0 {
 
 			for _, ap := range aps {
 				if absPath, sure := absolutePaths[ap]; sure {
@@ -63,7 +63,7 @@ func Register(absolutePaths map[AbsPath]string, relativePaths map[RelPath]string
 	return nil
 }
 
-func GetAbs(absolutePath AbsPath) string {
+func GetAbs(absolutePath AbsDir) string {
 	if ap, ok := absPaths[absolutePath]; ok {
 		return ap
 	}
@@ -71,9 +71,9 @@ func GetAbs(absolutePath AbsPath) string {
 	panic("abs path not registered")
 }
 
-func GetRel(relativePath RelPath, absolutePath AbsPath) string {
+func GetRel(relativePath RelDir, absolutePath AbsDir) string {
 
-	if aps, ok := relAbsPaths[relativePath]; ok {
+	if aps, ok := relAbsParents[relativePath]; ok {
 		if !slices.Contains(aps, absolutePath) {
 			panic("rel path not registered under abs path")
 		}
