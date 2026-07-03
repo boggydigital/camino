@@ -1,6 +1,9 @@
 package camino
 
-import "path/filepath"
+import (
+	"os"
+	"path/filepath"
+)
 
 type (
 	AbsPath int
@@ -13,15 +16,17 @@ var (
 	absPaths      map[AbsPath]string
 )
 
-func Register(ap AbsPath, absPath string, rps map[RelPath]string) {
+func Register(ap AbsPath, absPath string, rps map[RelPath]string) error {
 	if absPaths == nil {
 		absPaths = make(map[AbsPath]string)
 	}
 
 	absPaths[ap] = absPath
 
-	if len(rps) == 0 {
-		return
+	if _, err := os.Stat(absPath); os.IsNotExist(err) {
+		if err = os.MkdirAll(absPath, DefaultFileMode); err != nil {
+			return err
+		}
 	}
 
 	if relParentPath == nil {
@@ -32,10 +37,20 @@ func Register(ap AbsPath, absPath string, rps map[RelPath]string) {
 		relPaths = make(map[RelPath]string)
 	}
 
-	for rp, relPath := range relPaths {
+	for rp, relPath := range rps {
 		relPaths[rp] = relPath
 		relParentPath[rp] = ap
+
+		absRelPath := filepath.Join(absPath, relPath)
+
+		if _, err := os.Stat(absRelPath); os.IsNotExist(err) {
+			if err = os.MkdirAll(absRelPath, DefaultFileMode); err != nil {
+				return err
+			}
+		}
 	}
+
+	return nil
 }
 
 func GetAbs(ap AbsPath) string {
