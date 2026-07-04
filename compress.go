@@ -15,13 +15,13 @@ const (
 
 const Layout = "2006-01-02-15-04-05"
 
-func TimedTarGzFilename() string {
+func TimestampedTarGzFilename() string {
 	return time.Now().Format(Layout) + tarGzExt
 }
 
 func Compress(src, dst string) error {
 
-	exportedPath := filepath.Join(dst, TimedTarGzFilename())
+	exportedPath := filepath.Join(dst, TimestampedTarGzFilename())
 
 	if _, err := os.Stat(exportedPath); os.IsExist(err) {
 		return err

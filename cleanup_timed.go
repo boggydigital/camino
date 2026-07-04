@@ -13,7 +13,7 @@ const (
 	numFilesToPreserve  = 15
 )
 
-func CleanupTimed(dir string, layout string, delete bool) error {
+func CleanupTimed(dir string, delete bool) error {
 
 	d, err := os.Open(dir)
 	if err != nil {
@@ -36,7 +36,7 @@ func CleanupTimed(dir string, layout string, delete bool) error {
 		for filepath.Ext(fnse) != "" {
 			fnse = strings.TrimSuffix(fnse, filepath.Ext(fnse))
 		}
-		ft, perr := time.Parse(layout, fnse)
+		ft, perr := time.Parse(Layout, fnse)
 		if perr != nil {
 			continue
 		}
@@ -54,7 +54,7 @@ func CleanupTimed(dir string, layout string, delete bool) error {
 
 		// never delete all backups, leave the latest file as the current backup
 		if len(oldFiles) == len(filenames) {
-			if err = os.Rename(oldFiles[len(oldFiles)-1], TimedTarGzFilename()); err != nil {
+			if err = os.Rename(oldFiles[len(oldFiles)-1], TimestampedTarGzFilename()); err != nil {
 				return err
 			}
 			oldFiles = oldFiles[:len(oldFiles)-1]
