@@ -114,3 +114,21 @@ func ReadOverrides(path string) (map[string]string, error) {
 
 	return directories, nil
 }
+
+func ResolveAbsPaths(rootPath string, absDirNames map[AbsDir]string, overrides map[string]string) map[AbsDir]string {
+
+	resolvedAbsPaths := make(map[AbsDir]string)
+
+	for ad := range absDirNames {
+
+		adn := absDirNames[ad]
+
+		if ovd, ok := overrides[adn]; !ok {
+			resolvedAbsPaths[ad] = filepath.Join(rootPath, adn)
+		} else {
+			resolvedAbsPaths[ad] = ovd
+		}
+	}
+
+	return resolvedAbsPaths
+}
