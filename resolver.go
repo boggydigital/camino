@@ -16,14 +16,14 @@ type (
 
 var (
 	absPaths      map[AbsDir]string
-	relPaths      map[RelDir]string
+	relNames      map[RelDir]string
 	relAbsParents map[RelDir][]AbsDir
 )
 
-func Register(absolutePaths map[AbsDir]string, relativePaths map[RelDir]string, relativeAbsoluteParents map[RelDir][]AbsDir) error {
+func Register(absolutePaths map[AbsDir]string, relativeNames map[RelDir]string, relativeAbsoluteParents map[RelDir][]AbsDir) error {
 
 	absPaths = absolutePaths
-	relPaths = relativePaths
+	relNames = relativeNames
 	relAbsParents = relativeAbsoluteParents
 
 	for _, ap := range absolutePaths {
@@ -34,14 +34,14 @@ func Register(absolutePaths map[AbsDir]string, relativePaths map[RelDir]string, 
 		}
 	}
 
-	for rp, relPath := range relativePaths {
+	for rp, relName := range relativeNames {
 
 		if aps, ok := relativeAbsoluteParents[rp]; ok && len(aps) > 0 {
 
 			for _, ap := range aps {
 				if absPath, sure := absolutePaths[ap]; sure {
 
-					absRelPath := filepath.Join(absPath, relPath)
+					absRelPath := filepath.Join(absPath, relName)
 
 					if _, err := os.Stat(absRelPath); os.IsNotExist(err) {
 						if err = os.MkdirAll(absRelPath, DefaultFileMode); err != nil {
@@ -78,8 +78,8 @@ func GetRel(relativePath RelDir, absolutePath AbsDir) string {
 			panic("rel path not registered under abs path")
 		}
 
-		if relPath, sure := relPaths[relativePath]; sure {
-			return filepath.Join(GetAbs(absolutePath), relPath)
+		if relName, sure := relNames[relativePath]; sure {
+			return filepath.Join(GetAbs(absolutePath), relName)
 		}
 
 		panic("rel path not registered")
