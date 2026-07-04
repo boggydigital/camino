@@ -38,7 +38,9 @@ func ServeFile(absPath string, w http.ResponseWriter, r *http.Request, opts ...S
 		}
 
 		http.ServeFile(w, r, absPath)
-	} else {
+	} else if os.IsNotExist(err) {
 		http.Error(w, err.Error(), http.StatusNotFound)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
