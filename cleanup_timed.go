@@ -13,9 +13,11 @@ const (
 	numFilesToPreserve  = 15
 )
 
-func CleanupTimed(dir string, delete bool) error {
+func CleanupTimed(dir AbsDir, delete bool) error {
 
-	d, err := os.Open(dir)
+	absDirPath := GetAbs(dir)
+
+	d, err := os.Open(absDirPath)
 	if err != nil {
 		return err
 	}
@@ -61,7 +63,7 @@ func CleanupTimed(dir string, delete bool) error {
 		}
 
 		for _, fn := range oldFiles {
-			filename := filepath.Join(dir, fn)
+			filename := filepath.Join(absDirPath, fn)
 			if err = os.Remove(filename); err != nil {
 				return err
 			}
@@ -74,7 +76,7 @@ func CleanupTimed(dir string, delete bool) error {
 		slices.Sort(currentFiles)
 
 		for ii := 0; ii < (len(currentFiles) - numFilesToPreserve); ii++ {
-			filename := filepath.Join(dir, currentFiles[ii])
+			filename := filepath.Join(absDirPath, currentFiles[ii])
 			if err = os.Remove(filename); err != nil {
 				return err
 			}

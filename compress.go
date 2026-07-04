@@ -19,9 +19,12 @@ func TimestampedTarGzFilename() string {
 	return time.Now().Format(Layout) + tarGzExt
 }
 
-func Compress(src, dst string) error {
+func Compress(src, dst AbsDir) error {
 
-	exportedPath := filepath.Join(dst, TimestampedTarGzFilename())
+	absSrcPath := GetAbs(src)
+	absDstPath := GetAbs(dst)
+
+	exportedPath := filepath.Join(absDstPath, TimestampedTarGzFilename())
 
 	if _, err := os.Stat(exportedPath); os.IsExist(err) {
 		return err
@@ -50,7 +53,7 @@ func Compress(src, dst string) error {
 			return nil
 		}
 
-		relPath, err := filepath.Rel(src, path)
+		relPath, err := filepath.Rel(absSrcPath, path)
 		if err != nil {
 			return err
 		}
@@ -81,7 +84,7 @@ func Compress(src, dst string) error {
 		return nil
 	}
 
-	if err = filepath.Walk(src, tarWalker); err != nil {
+	if err = filepath.Walk(absSrcPath, tarWalker); err != nil {
 		return err
 	}
 
