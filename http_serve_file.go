@@ -17,7 +17,7 @@ const (
 	NoLastModified
 )
 
-func ServeFile(absPath string, w http.ResponseWriter, r *http.Request, opts ...ServeOption) {
+func ServeFile(w http.ResponseWriter, r *http.Request, absPath string, opts ...ServeOption) {
 
 	if fi, err := os.Stat(absPath); err == nil {
 
